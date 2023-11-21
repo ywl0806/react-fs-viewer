@@ -1,4 +1,4 @@
-import { FC, createContext, useRef, useState } from 'react';
+import { createContext, useRef, useState } from 'react';
 import { DefaultType, SelectedItem } from '../types/types';
 import * as React from 'react';
 
@@ -24,7 +24,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const FileSystemProvider: FC<Props> = ({ children }) => {
+export const FileSystemProvider = ({ children }: Props) => {
   const [selectedItems, setSelectedItems] = useState<SelectedItem<DefaultType>>(
     {}
   );

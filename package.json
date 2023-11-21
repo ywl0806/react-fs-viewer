@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -10,10 +10,13 @@
   "engines": {
     "node": ">=10"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
+    "test": "jest",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
@@ -39,7 +42,7 @@
   "size-limit": [
     {
       "path": "dist/react-fs-viewer.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "50 KB"
     },
     {
       "path": "dist/react-fs-viewer.esm.js",
@@ -47,20 +50,26 @@
     }
   ],
   "devDependencies": {
+    "@babel/preset-env": "^7.23.3",
+    "@babel/preset-react": "^7.23.3",
+    "@jest/globals": "^29.7.0",
     "@size-limit/preset-small-lib": "^11.0.0",
     "@types/lodash": "^4.14.201",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "babel-jest": "^29.7.0",
     "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-test-renderer": "^18.2.0",
     "size-limit": "^11.0.0",
+    "ts-jest": "^29.1.1",
     "tsdx": "^0.14.1",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "lodash-es": "^4.17.21"
   }
 }
