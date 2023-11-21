@@ -39,6 +39,9 @@
   "name": "react-fs-viewer",
   "author": "ywl0806",
   "module": "dist/react-fs-viewer.esm.js",
+  "np": {
+    "contents": "dist"
+  },
   "size-limit": [
     {
       "path": "dist/react-fs-viewer.cjs.production.min.js",
