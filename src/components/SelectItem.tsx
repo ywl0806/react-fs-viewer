@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { ElementWithBoundary, Movement } from './types/types';
+import { ElementWithBoundary, Movement } from '../types/types';
 
 type SelectionItemProps = {
   isSelected: boolean;

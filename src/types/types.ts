@@ -10,7 +10,7 @@ export type SelectionBox = {
 
 export type DefaultType = Record<string, unknown>;
 
-export type Item<T extends DefaultType> = {
+export type FileElement<T extends DefaultType> = {
   data?: T;
   droppable?: boolean;
   onDrop?: DropHandler<T>;
@@ -48,7 +48,7 @@ export type MoveAnimation = {
 
 export type DropHandler<T extends DefaultType = DefaultType> = (
   dropData: DropItem<T>[],
-  current: Item<T>
+  current: FileElement<T>
 ) => void;
 
 export type DropItem<T> = {

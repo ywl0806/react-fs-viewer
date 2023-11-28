@@ -3,13 +3,13 @@ import {
   DefaultType,
   DropHandler,
   DropItem,
-  Item,
+  FileElement,
   SelectedItem,
-} from './types/types';
+} from '../types/types';
 import * as React from 'react';
 
 type Props<T extends DefaultType> = {
-  item: Item<any>;
+  item: FileElement<any>;
   children: React.ReactNode;
   isDragging: boolean;
   seletedItem: SelectedItem<T>;

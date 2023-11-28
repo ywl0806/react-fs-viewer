@@ -8,8 +8,8 @@ import {
   useState,
 } from 'react';
 import * as React from 'react';
-import { useContainerRect } from './hooks/useContainerRef';
-import { DragSelectionContext } from './context/SelectionContext';
+import { useContainerRect } from '../hooks/useContainerRef';
+import { DragSelectionContext } from '../context/SelectionContext';
 
 type DragSelectionContainerProps = {
   children?: React.ReactNode;
