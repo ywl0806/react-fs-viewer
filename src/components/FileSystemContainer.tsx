@@ -11,27 +11,27 @@ import {
   DefaultType,
   DropHandler,
   ElementWithBoundary,
-  Item,
+  FileElement,
   MoveAnimation,
   SelectedItem,
-} from './types/types';
+} from '../types/types';
 import SelectionItem from './SelectItem';
 
-import { usePointerPosition } from './hooks/usePointerPosition';
-import { useDragLogic } from './hooks/useDragLogic';
+import { usePointerPosition } from '../hooks/usePointerPosition';
+import { useDragLogic } from '../hooks/useDragLogic';
 import { ItemDropzone } from './ItemDropzone';
 import {
   DragSelectionContext,
   DragSelectionProvider,
-} from './context/SelectionContext';
+} from '../context/SelectionContext';
 import { DragSelectionContainer } from './DragSeletionContainer';
-import { FileSystemContext } from './context/FileSystemContext';
+import { FileSystemContext } from '../context/FileSystemContext';
 import { isEqual } from 'lodash';
 import * as React from 'react';
-import { useWindowSize } from './hooks/useWindowSize';
+import { useWindowSize } from '../hooks/useWindowSize';
 
 type Props<T extends DefaultType> = {
-  items: Item<T>[];
+  items: FileElement<T>[];
   containerStyle?: React.CSSProperties;
   dropHandler?: DropHandler<T>;
 };
@@ -64,7 +64,9 @@ const _FileSystemContainer = <T extends DefaultType>({
   }, [items]);
 
   // Calculate the boundaries for each item
-  const boundaries: ElementWithBoundary<T>[] = useMemo(() => {
+  const [boundaries, setBoundaries] = useState<ElementWithBoundary<T>[]>([]);
+
+  useEffect(() => {
     const locations: ElementWithBoundary<T>[] = [];
     itemRefs.current.forEach(ref => {
       if (!ref.current) return;
@@ -82,7 +84,7 @@ const _FileSystemContainer = <T extends DefaultType>({
       });
     });
 
-    return locations;
+    setBoundaries(locations);
   }, [window, updating]);
 
   const boundaryDict = useMemo(() => {

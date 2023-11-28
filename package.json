@@ -1,17 +1,19 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=10"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "url": "https://github.com/ywl0806/react-fs-viewer"
   },
   "scripts": {
     "start": "tsdx watch",
@@ -39,6 +41,9 @@
   "name": "react-fs-viewer",
   "author": "ywl0806",
   "module": "dist/react-fs-viewer.esm.js",
+  "np": {
+    "contents": "dist"
+  },
   "size-limit": [
     {
       "path": "dist/react-fs-viewer.cjs.production.min.js",
@@ -62,7 +67,6 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "lodash": "^4.17.21",
-    "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-test-renderer": "^18.2.0",
@@ -71,5 +75,8 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21"
   }
 }
