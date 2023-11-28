@@ -5,10 +5,15 @@ type UsePointerPositionProp = {
   containerRef?: React.RefObject<Element>;
   rect?: ElementPosition | null;
 };
+
+/**
+ * Custom hook to track the mouse pointer's position relative to a specified container.
+ */
 export const usePointerPosition = ({
   containerRef,
   rect: _rect,
 }: UsePointerPositionProp): Point => {
+  // State to store the current pointer position.
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
