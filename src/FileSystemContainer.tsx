@@ -64,7 +64,9 @@ const _FileSystemContainer = <T extends DefaultType>({
   }, [items]);
 
   // Calculate the boundaries for each item
-  const boundaries: ElementWithBoundary<T>[] = useMemo(() => {
+  const [boundaries, setBoundaries] = useState<ElementWithBoundary<T>[]>([]);
+
+  useEffect(() => {
     const locations: ElementWithBoundary<T>[] = [];
     itemRefs.current.forEach(ref => {
       if (!ref.current) return;
@@ -82,7 +84,7 @@ const _FileSystemContainer = <T extends DefaultType>({
       });
     });
 
-    return locations;
+    setBoundaries(locations);
   }, [window, updating]);
 
   const boundaryDict = useMemo(() => {
