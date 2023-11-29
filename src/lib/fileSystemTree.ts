@@ -16,11 +16,11 @@ export type FileItem<T = any> = {
  * Interface for attributes of a node in a file system tree.
  * @template T The type of data associated with the node.
  */
-interface NodeItem<T = any> {
+export type NodeItem<T = any> = {
   path: string;
   name: string;
   data?: T;
-}
+};
 
 /**
  * Represents the entire file system tree.
