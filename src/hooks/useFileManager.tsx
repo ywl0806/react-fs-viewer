@@ -1,19 +1,30 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FileElement } from '../types/types';
 import { FileSystemNode, FileSystemTree } from '../lib/fileSystemTree';
 
+/**
+ * Props for useFileManager hook.
+ * @property {string} [path] - The current path.
+ * @property {string[]} [fileList] - The list of file paths.
+ */
 type UseFileManagerProps = {
   path?: string;
   fileList?: string[];
 };
 
+/**
+ * A hook for managing file elements in a file system.
+ * @param {UseFileManagerProps} props - The properties for the file manager.
+
+ */
 export const useFileManager = <T extends unknown = unknown>({
   path,
   fileList,
-}: UseFileManagerProps) => {
+}: UseFileManagerProps): object => {
   const [files, setFiles] = useState<FileElement<T>[]>([]);
+  const tree = useRef<FileSystemTree<T>>(new FileSystemTree());
 
-  // 現在のディレクトリの1つ上のディレクトリを計算する
+  // Calculate the directory one level up from the current directory
   const prevDirectory = useMemo(() => {
     if (!path) return '';
     return path
@@ -22,7 +33,7 @@ export const useFileManager = <T extends unknown = unknown>({
       .join('/');
   }, [path]);
 
-  // 戻るフォルダーアイテムを作成する関数
+  // Function to create a back folder item
   const createBackFolderItem = useCallback((): FileElement<any> => {
     return {
       id: prevDirectory || 'root',
@@ -33,7 +44,27 @@ export const useFileManager = <T extends unknown = unknown>({
       droppable: true,
     };
   }, [prevDirectory]);
-  // ファイルまたはフォルダーアイテムを作成する関数
+
+  const renderFiles = useCallback(
+    (currentPath?: string) => {
+      const root = tree.current.getRoot();
+
+      const currentDirectory = root.get(currentPath);
+
+      // If the current directory does not exist, set the option to go back
+      if (!currentDirectory) {
+        setFiles([createBackFolderItem()]);
+        return;
+      }
+
+      // Get and set the child elements of the current directory
+      const newFiles = currentDirectory.getChildren().map(createFileItem);
+      setFiles(path ? [createBackFolderItem(), ...newFiles] : newFiles);
+    },
+    [setFiles, createBackFolderItem]
+  );
+
+  // Function to create a file or folder item
   const createFileItem = useCallback((file: FileSystemNode<T>): FileElement<
     any
   > => {
@@ -58,26 +89,20 @@ export const useFileManager = <T extends unknown = unknown>({
   }, []);
 
   useEffect(() => {
-    // ファイルリストがなければ処理を終了する
+    // Terminate the process if the file list is not provided
     if (!fileList) return;
 
-    // ファイルツリーを作成する
-    const tree = new FileSystemTree(
+    // Create a file system tree
+    tree.current = new FileSystemTree(
       fileList.map(filePath => ({ path: filePath }))
     );
-    const root = tree.getRoot();
-    const currentDirectory = root.get(path);
+    renderFiles(path);
+  }, [fileList]);
 
-    // 現在のディレクトリが存在しない場合、戻るオプションを設定する
-    if (!currentDirectory) {
-      setFiles([createBackFolderItem()]);
-      return;
-    }
-
-    // 現在のディレクトリの子要素を取得して設定する
-    const newFiles = currentDirectory.getChildren().map(createFileItem);
-    setFiles(path ? [createBackFolderItem(), ...newFiles] : newFiles);
-  }, [fileList, path]);
+  useEffect(() => {
+    // Render files when the path changes
+    renderFiles(path);
+  }, [path]);
 
   return { files };
 };

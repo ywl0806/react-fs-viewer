@@ -87,7 +87,7 @@ export class FileSystemNode<T = any> {
    * Adds a single file to the node.
    * @param {FileItem<T>} file - The file item to be added.
    */
-  addFile({ path, data }: FileItem): void {
+  addFile({ path, data }: FileItem) {
     const paths = path.split('/');
     let currentNode: FileSystemNode<T> = this;
 
@@ -106,6 +106,8 @@ export class FileSystemNode<T = any> {
       }
       currentNode = currentNode.children[name];
     });
+
+    return currentNode;
   }
 
   /**
@@ -121,14 +123,18 @@ export class FileSystemNode<T = any> {
   /**
    * Retrieves a node by its path.
    * @param {string} [path] - The path of the node to retrieve.
-   * @returns {FileSystemNode<T>} The node at the specified path.
+   * @returns {FileSystemNode<T> | null}
    */
-  get(path?: string): FileSystemNode<T> {
+  get(path?: string): FileSystemNode<T> | null {
     if (!path) return this;
     const paths = path.split('/');
-    let file: FileSystemNode<T> = this;
+    let file: FileSystemNode<T> | null = this;
 
     paths.forEach(name => {
+      if (!file) {
+        file = null;
+        return;
+      }
       file = file.children[name];
     });
 
