@@ -6,12 +6,9 @@ The React File System UI Library offers an intuitive and user-friendly file brow
 
 ### Features
 
-- **File and Directory Browsing**: Seamlessly navigate through files and directories.
-- **Customizable Views**: Choose between list, grid, and column views.
-- **File Operations**: Support for common file operations like rename, delete, and move.
 - **Drag and Drop**: Intuitive drag and drop interface for file management.
-- **Responsive Design**: Works well on both desktop and mobile devices.
-- **Cross-Browser Compatibility**: Consistent experience across all modern browsers.
+- **Multiple Selection**: Allow users to select multiple files or folders at the same time.
+- **Drag Selection**: Enables users to click and drag over a range of items to easily select multiple files or folders in a continuous group.
 
 ### Installation
 
