@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FileElement } from '../types/types';
+import { DefaultType, FileElement } from '../types/types';
 import {
   FileItem,
   FileSystemNode,
@@ -11,7 +11,7 @@ import {
  * @property {string} [path] - The current path.
  * @property {FileItem[]} [fileList] - The list of file.
  */
-type UseFileManagerProps<T> = {
+type UseFileManagerProps<T extends DefaultType<T> = DefaultType> = {
   path?: string;
   fileList?: FileItem<T>[];
 };
@@ -19,12 +19,12 @@ type UseFileManagerProps<T> = {
 /**
  * A hook for managing file elements in a file system.
  * @param {UseFileManagerProps} props - The properties for the file manager.
-
+ * @returns {FileElement[]} files - files for rendering
  */
-export const useFileManager = <T extends unknown = unknown>({
+export const useFileManager = <T extends DefaultType<T> = DefaultType>({
   path,
   fileList,
-}: UseFileManagerProps<T>): object => {
+}: UseFileManagerProps<T>): { files: FileElement<T>[] } => {
   const [files, setFiles] = useState<FileElement<T>[]>([]);
   const tree = useRef<FileSystemTree<T>>(new FileSystemTree());
 
@@ -82,8 +82,7 @@ export const useFileManager = <T extends unknown = unknown>({
 
       // If the current directory does not exist, set the option to go back
       if (!currentDirectory) {
-        setFiles([createBackFolderItem()]);
-        return [];
+        return [createBackFolderItem()];
       }
 
       // Get and set the child elements of the current directory

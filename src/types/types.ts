@@ -10,13 +10,15 @@ export type SelectionBox = {
   endPoint: Point;
 };
 
-export type DefaultType = unknown;
+export type DefaultType<T extends unknown = unknown> = {
+  [P in keyof T]: P extends 'file' ? never : T[P];
+};
 
-export type FileData<T extends unknown = unknown> = {
+export type FileData<T extends DefaultType<T> = DefaultType> = {
   file?: FileSystemNode;
 } & T;
 
-export type FileElement<T extends DefaultType> = {
+export type FileElement<T extends DefaultType<T>> = {
   data: FileData<T>;
   droppable?: boolean;
   onDrop?: DropHandler<T>;
@@ -32,11 +34,11 @@ export type Boundary = {
   top: number;
   bottom: number;
 };
-export type ElementWithBoundary<T extends DefaultType = DefaultType> = {
+export type ElementWithBoundary<T extends DefaultType<T> = DefaultType> = {
   ref: HTMLDivElement;
   data: FileData<T>;
 } & Boundary;
-export type SelectedItem<T extends DefaultType = DefaultType> = {
+export type SelectedItem<T extends DefaultType<T> = DefaultType> = {
   [key: string]: ElementWithBoundary<T>;
 };
 
@@ -52,16 +54,16 @@ export type Movement = {
 export type MoveAnimation = {
   [key: string]: Movement;
 };
-export type DoubleClickHandler<T extends DefaultType = DefaultType> = (
+export type DoubleClickHandler<T extends DefaultType<T> = DefaultType> = (
   data: FileData<T>,
   e: React.MouseEvent<HTMLDivElement, MouseEvent>
 ) => void;
-export type DropHandler<T extends DefaultType = DefaultType> = (
+export type DropHandler<T extends DefaultType<T> = DefaultType> = (
   dropData: DropItem<T>[],
   current: FileElement<T>
 ) => void;
 
-export type DropItem<T extends DefaultType> = {
+export type DropItem<T extends DefaultType<T>> = {
   id: string;
   data: FileData<T>;
 };
