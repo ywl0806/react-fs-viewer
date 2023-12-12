@@ -8,14 +8,14 @@ import {
 } from '../types/types';
 import * as React from 'react';
 
-type Props<T extends DefaultType> = {
+type Props<T extends DefaultType<T>> = {
   item: FileElement<any>;
   children: React.ReactNode;
   isDragging: boolean;
   seletedItem: SelectedItem<T>;
   onDrop?: DropHandler<any>;
 };
-export const ItemDropzone = <T extends DefaultType>({
+export const ItemDropzone = <T extends DefaultType<T>>({
   children,
   seletedItem,
   isDragging,

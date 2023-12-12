@@ -9,14 +9,14 @@ import {
   SelectedItem,
 } from '../types/types';
 
-type UseDragProps<T extends DefaultType> = {
+type UseDragProps<T extends DefaultType<T>> = {
   getItem: (id: string) => ElementWithBoundary<T> | null;
   selectedItems: SelectedItem<T> | null;
   setSelectedItems: React.Dispatch<React.SetStateAction<SelectedItem<T>>>;
   isDragging: boolean;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
 };
-export const useDragLogic = <T extends DefaultType>({
+export const useDragLogic = <T extends DefaultType<T>>({
   getItem,
   selectedItems,
   setSelectedItems,
