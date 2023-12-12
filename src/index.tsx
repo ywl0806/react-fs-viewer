@@ -1,6 +1,5 @@
-import { DefaultType, Item } from './types/types';
-
-export { FileSystemContainer } from './FileSystemContainer';
+export { FileSystemContainer } from './components/FileSystemContainer';
 export { FileSystemProvider } from './context/FileSystemContext';
-
-export type FileElement<T extends DefaultType> = Item<T>;
+export { useFileSystem } from './hooks/useFileSystem';
+export { useFileManager } from './hooks/useFileManager';
+export * from './types/types';

@@ -1,3 +1,5 @@
+import { FileSystemNode } from '../lib/fileSystemTree';
+
 export type Point = {
   x: number;
   y: number;
@@ -8,13 +10,20 @@ export type SelectionBox = {
   endPoint: Point;
 };
 
-export type DefaultType = Record<string, unknown>;
+export type DefaultType<T extends unknown = unknown> = {
+  [P in keyof T]: P extends 'file' ? never : T[P];
+};
 
-export type Item<T extends DefaultType> = {
-  data?: T;
+export type FileData<T extends DefaultType<T> = DefaultType> = {
+  file?: FileSystemNode;
+} & T;
+
+export type FileElement<T extends DefaultType<T>> = {
+  data: FileData<T>;
   droppable?: boolean;
   onDrop?: DropHandler<T>;
-  render?: (data?: T) => React.ReactNode;
+  onDubbleClick?: DoubleClickHandler<T>;
+  render?: (data: FileData<T>) => React.ReactNode;
   children?: React.ReactNode;
   id: string;
 };
@@ -25,11 +34,11 @@ export type Boundary = {
   top: number;
   bottom: number;
 };
-export type ElementWithBoundary<T extends DefaultType = DefaultType> = {
+export type ElementWithBoundary<T extends DefaultType<T> = DefaultType> = {
   ref: HTMLDivElement;
-  data?: T;
+  data: FileData<T>;
 } & Boundary;
-export type SelectedItem<T extends DefaultType = DefaultType> = {
+export type SelectedItem<T extends DefaultType<T> = DefaultType> = {
   [key: string]: ElementWithBoundary<T>;
 };
 
@@ -45,15 +54,18 @@ export type Movement = {
 export type MoveAnimation = {
   [key: string]: Movement;
 };
-
-export type DropHandler<T extends DefaultType = DefaultType> = (
+export type DoubleClickHandler<T extends DefaultType<T> = DefaultType> = (
+  data: FileData<T>,
+  e: React.MouseEvent<HTMLDivElement, MouseEvent>
+) => void;
+export type DropHandler<T extends DefaultType<T> = DefaultType> = (
   dropData: DropItem<T>[],
-  current: Item<T>
+  current: FileElement<T>
 ) => void;
 
-export type DropItem<T> = {
+export type DropItem<T extends DefaultType<T>> = {
   id: string;
-  data?: T;
+  data: FileData<T>;
 };
 
 export type HandleDragMouseDown = (
@@ -74,3 +86,8 @@ export type ElementPosition = {
   right: number;
   bottom: number;
 };
+
+export type CreateFileElement<T extends DefaultType<T> = DefaultType> = (
+  files: FileSystemNode<T>[],
+  currentDirectory: FileSystemNode<T> | null
+) => FileElement<T>[];

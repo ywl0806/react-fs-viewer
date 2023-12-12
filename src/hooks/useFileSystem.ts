@@ -1,8 +1,12 @@
-import { useContext } from 'react'
-import { FileSystemContext } from '../context/FileSystemContext'
+import { useContext } from 'react';
+import { FileSystemContext } from '../context/FileSystemContext';
 
+/**
+ *
+ * @returns
+ */
 export const useFileSystem = () => {
-  const { selectedItems } = useContext(FileSystemContext)
+  const { selectedItems } = useContext(FileSystemContext);
 
-  return { selectedItems }
-}
+  return { selectedItems };
+};
