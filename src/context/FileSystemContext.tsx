@@ -2,7 +2,7 @@ import { createContext, useRef, useState } from 'react';
 import { DefaultType, SelectedItem } from '../types/types';
 import * as React from 'react';
 
-type FileSystemContextType<T extends DefaultType> = {
+type FileSystemContextType<T extends DefaultType<T>> = {
   selectedItems: SelectedItem<T>;
   setSelectedItems: React.Dispatch<React.SetStateAction<SelectedItem<T>>>;
 

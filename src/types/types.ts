@@ -86,3 +86,8 @@ export type ElementPosition = {
   right: number;
   bottom: number;
 };
+
+export type CreateFileElement<T extends DefaultType<T> = DefaultType> = (
+  files: FileSystemNode<T>[],
+  currentDirectory: FileSystemNode<T> | null
+) => FileElement<T>[];

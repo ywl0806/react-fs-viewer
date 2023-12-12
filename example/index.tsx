@@ -2,157 +2,100 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { FileElement, FileSystemContainer, FileSystemProvider } from '../.';
-const Folder = ({ title }: { title?: string }) => (
-  <div
-    style={{
-      width: '5rem',
-      height: '6rem',
-      backgroundColor: 'red',
-    }}
-  >
-    <div className="h-[2rem] align-middle">{title}</div>
-  </div>
-);
+import {
+  CreateFileElement,
+  FileElement,
+  FileSystemContainer,
+  FileSystemProvider,
+  useFileManager,
+  useFileSystem,
+} from '../.';
+import { Folder } from './src/component/Folder';
+import { File } from './src/component/File';
+import { FileItem } from '../dist/lib/fileSystemTree';
 
-const File = ({ title }: { title?: string }) => (
-  <div
-    style={{
-      width: '5rem',
-      height: '6rem',
-      backgroundColor: 'red',
-    }}
-  >
-    <div className="h-[2rem] align-middle">{title}</div>
-  </div>
-);
-type Hoge = {
+type FileData = {
   title: string;
 };
-const items: FileElement<Hoge>[] = [
-  {
-    id: 'hogehoge',
-    render: data => {
-      return <Folder title={data?.title} />;
-    },
-    data: {
-      title: 'folder5',
-    },
+const items: FileItem<FileData>[] = [];
 
-    droppable: true,
-  },
-  {
-    id: '11',
-    render: data => {
-      return <File title={data?.title} />;
-    },
-    data: {
-      title: 'file',
-    },
-  },
-  {
-    id: '12',
-    render: data => {
-      return <File title={data?.title} />;
-    },
-    data: {
-      title: 'file',
-    },
-  },
-];
+const Files = () => {
+  const { selectedItems } = useFileSystem();
 
-const items2: FileElement<Hoge>[] = [
-  {
-    id: '13',
-    render: data => {
-      return <File title={data?.title} />;
-    },
-    data: {
-      title: 'file',
-    },
-  },
+  const fileItems = React.useMemo(
+    () => [
+      {
+        path: 'hoge',
+        data: {
+          title: 'hoge',
+        },
+      },
+      {
+        path: 'hoge2',
+        data: {
+          title: 'hoge',
+        },
+      },
+      {
+        path: 'hoge3',
+        data: {
+          title: 'hoge',
+        },
+      },
+    ],
+    []
+  );
+  const createFileElement: CreateFileElement<FileData> = React.useCallback(
+    (filedata, currentDirectory) => {
+      const elements: FileElement<FileData>[] = filedata.map(file => {
+        return {
+          data: {
+            title: file.name,
+            file,
+          },
+          id: file.path,
+          render(data) {
+            return <File title={data.title} />;
+          },
+          onDubbleClick(data) {
+            console.log(data);
+          },
+          droppable: file.isFolder,
+        };
+      });
 
-  {
-    id: '15235235',
-    render: data => {
-      return <Folder title={data?.title} />;
+      return elements;
     },
-    data: {
-      title: 'folder1',
-    },
-    droppable: true,
-  },
-  {
-    id: '235235232',
-    render: data => {
-      return <Folder title={data?.title} />;
-    },
-    data: {
-      title: 'folder2',
-    },
-    droppable: true,
-  },
-  {
-    id: '213',
-    render: data => {
-      return <File title={data?.title} />;
-    },
-    data: {
-      title: 'file',
-    },
-  },
-  {
-    id: '214',
-    render: data => {
-      return <File title={data?.title} />;
-    },
-    data: {
-      title: 'file',
-    },
-  },
-  {
-    id: '311',
-    render: data => {
-      return <File title={data?.title} />;
-    },
-    data: {
-      title: 'file',
-    },
-  },
-];
+    []
+  );
+  const [files] = useFileManager<FileData>({
+    path: '',
+    fileItems,
+    createFileElement,
+  });
 
+  return (
+    <div
+      style={{
+        height: '50rem',
+        margin: '2rem',
+      }}
+    >
+      <FileSystemContainer
+        items={files}
+        dropHandler={(dropData, data) => {
+          console.log(dropData);
+          console.log(data);
+        }}
+      ></FileSystemContainer>
+    </div>
+  );
+};
 const App = () => {
   return (
-    <div>
-      <FileSystemProvider>
-        <div>
-          <div
-            style={{
-              height: '50rem',
-              margin: '2rem',
-            }}
-          >
-            <FileSystemContainer
-              containerStyle={{
-                height: '20rem',
-              }}
-              items={items}
-              dropHandler={(dropData, data) => {
-                console.log(dropData);
-                console.log(data);
-              }}
-            ></FileSystemContainer>
-            <FileSystemContainer
-              items={items2}
-              dropHandler={(dropData, data) => {
-                console.log(dropData);
-                console.log(data);
-              }}
-            ></FileSystemContainer>
-          </div>
-        </div>
-      </FileSystemProvider>
-    </div>
+    <FileSystemProvider>
+      <Files />
+    </FileSystemProvider>
   );
 };
 

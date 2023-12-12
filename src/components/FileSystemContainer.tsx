@@ -30,13 +30,13 @@ import { isEqual } from 'lodash';
 import * as React from 'react';
 import { useWindowSize } from '../hooks/useWindowSize';
 
-type Props<T extends DefaultType> = {
+type Props<T extends DefaultType<T>> = {
   items: FileElement<T>[];
   containerStyle?: React.CSSProperties;
   dropHandler?: DropHandler<T>;
 };
 
-const _FileSystemContainer = <T extends DefaultType>({
+const _FileSystemContainer = <T extends DefaultType<T>>({
   items,
   dropHandler,
   containerStyle,
@@ -60,7 +60,7 @@ const _FileSystemContainer = <T extends DefaultType>({
     itemRefs.current = Array(items.length)
       .fill(null)
       .map(() => createRef());
-    setTimeout(() => setUpdating(prev => prev + 1), 0);
+    setTimeout(() => setUpdating(prev => prev + 1), 100);
   }, [items]);
 
   // Calculate the boundaries for each item
@@ -170,8 +170,12 @@ const _FileSystemContainer = <T extends DefaultType>({
               ref={itemRefs.current[index]}
               id={item.id}
               index={index}
-              isSelected={!!selectedItems[item.id]}
-              isDragging={!!selectedItems[item.id] && isDragging}
+              isSelected={Boolean(selectedItems[item.id])}
+              isDragging={Boolean(selectedItems[item.id]) && isDragging}
+              onDoubleClick={e => {
+                if (item.data && item.onDubbleClick)
+                  item.onDubbleClick(item.data, e);
+              }}
               element={boundaryDict.get(item.id)}
             >
               {item.droppable ? (
@@ -207,15 +211,17 @@ const _FileSystemContainer = <T extends DefaultType>({
           {Object.keys(selectedItems).length > 1 && (
             <div
               style={{
-                backgroundColor: 'blueviolet',
+                fontFamily: 'sans-serif',
+                backgroundColor: 'red',
                 display: 'flex',
                 color: 'white',
-                fontSize: '1rem',
+                fontSize: '15px',
                 borderRadius: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                width: '1rem',
-                height: '1rem',
+                fontWeight: 'bold',
+                width: '20px',
+                height: '20px',
               }}
             >
               {Object.keys(selectedItems).length}
@@ -227,7 +233,7 @@ const _FileSystemContainer = <T extends DefaultType>({
   );
 };
 
-const checkCollision = <T extends DefaultType>(
+const checkCollision = <T extends DefaultType<T>>(
   selection: Boundary,
   target: ElementWithBoundary<T>
 ): boolean => {
@@ -239,7 +245,9 @@ const checkCollision = <T extends DefaultType>(
   );
 };
 
-export const FileSystemContainer = <T extends DefaultType>(props: Props<T>) => (
+export const FileSystemContainer = <T extends DefaultType<T>>(
+  props: Props<T>
+) => (
   <DragSelectionProvider>
     <_FileSystemContainer {...props} />
   </DragSelectionProvider>

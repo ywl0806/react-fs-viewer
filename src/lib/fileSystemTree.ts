@@ -144,10 +144,32 @@ export class FileSystemNode<T extends DefaultType<T> = DefaultType> {
   }
 
   /**
-   * Gets all child nodes of a node.
+   * Gets child nodes of a node.
    * @returns {FileSystemNode<T>[]} An array of child nodes.
    */
   getChildren(): FileSystemNode<T>[] {
     return Object.values(this.children);
   }
+
+  /**
+   * Get all child nodes of this node
+   * @returns {FileSystemNode<T>[]} An array of child nodes.
+   */
+  getAllChild(): FileSystemNode<T>[] {
+    const children: FileSystemNode<T>[] = [];
+    addNodeToList(this, children);
+
+    return children;
+  }
 }
+
+const addNodeToList = (file: FileSystemNode, list: FileSystemNode[]) => {
+  const children = file.getChildren();
+
+  if (file.isFolder) {
+    children.forEach(child => addNodeToList(child, list));
+    return;
+  }
+
+  list.push(file);
+};

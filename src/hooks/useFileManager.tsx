@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DefaultType, FileElement } from '../types/types';
+import { useEffect, useRef, useState } from 'react';
+import { CreateFileElement, DefaultType, FileElement } from '../types/types';
 import {
   FileItem,
   FileSystemNode,
@@ -13,9 +13,14 @@ import {
  */
 type UseFileManagerProps<T extends DefaultType<T> = DefaultType> = {
   path?: string;
-  fileList?: FileItem<T>[];
+  fileItems: FileItem<T>[];
+  createFileElement: CreateFileElement<T>;
 };
 
+type UseFileManagerReturns<T extends DefaultType<T> = DefaultType> = [
+  FileElement<T>[],
+  FileSystemNode<T> | null
+];
 /**
  * A hook for managing file elements in a file system.
  * @param {UseFileManagerProps} props - The properties for the file manager.
@@ -23,91 +28,28 @@ type UseFileManagerProps<T extends DefaultType<T> = DefaultType> = {
  */
 export const useFileManager = <T extends DefaultType<T> = DefaultType>({
   path,
-  fileList,
-}: UseFileManagerProps<T>): { files: FileElement<T>[] } => {
+  fileItems,
+  createFileElement,
+}: UseFileManagerProps<T>): UseFileManagerReturns<T> => {
   const [files, setFiles] = useState<FileElement<T>[]>([]);
+  const [currentDirectory, setCurrentDirectory] = useState<FileSystemNode<
+    T
+  > | null>(null);
+
   const tree = useRef<FileSystemTree<T>>(new FileSystemTree());
 
-  // Calculate the directory one level up from the current directory
-  const prevDirectory = useMemo(() => {
-    if (!path) return '';
-    return path
-      .split('/')
-      .slice(0, -1)
-      .join('/');
-  }, [path]);
-
-  // Function to create a back folder item
-  const createBackFolderItem = useCallback((): FileElement<any> => {
-    return {
-      id: prevDirectory || 'root',
-      data: {
-        file: new FileSystemNode({ path: prevDirectory, name: '' }),
-      },
-      //   render: () => <Folder title="..." />,
-      droppable: true,
-    };
-  }, [prevDirectory]);
-
-  // Function to create a file or folder item
-  const createFileItem = useCallback((file: FileSystemNode<T>): FileElement<
-    any
-  > => {
-    const { path, isFolder, data } = file;
-    return {
-      id: path,
-      data: data
-        ? {
-            file,
-            ...data,
-          }
-        : { file },
-
-      //   render: data =>
-      //     isFolder ? (
-      //       <Folder title={data.file.name} />
-      //     ) : (
-      //       <File title={data.file.name} />
-      //     ),
-      droppable: isFolder,
-    };
-  }, []);
-
-  // default Function for render files
-  const renderFiles = useCallback(
-    (currentPath?: string): FileElement<T>[] => {
-      const root = tree.current.getRoot();
-
-      const currentDirectory = root.get(currentPath);
-
-      // If the current directory does not exist, set the option to go back
-      if (!currentDirectory) {
-        return [createBackFolderItem()];
-      }
-
-      // Get and set the child elements of the current directory
-      const newFiles: FileElement<T>[] = currentDirectory
-        .getChildren()
-        .map(createFileItem);
-      return currentPath ? [createBackFolderItem(), ...newFiles] : newFiles;
-    },
-    [createBackFolderItem]
-  );
-
   useEffect(() => {
-    // Terminate the process if the file list is not provided
-    if (!fileList) return;
-
     // Create a file system tree
-    tree.current = new FileSystemTree(fileList);
-
-    setFiles(renderFiles(path));
-  }, [fileList]);
+    tree.current = new FileSystemTree(fileItems);
+  }, [fileItems]);
 
   useEffect(() => {
-    // Render files when the path changes
-    renderFiles(path);
+    const newCurrentDirectory = tree.current.getRoot().get(path);
+    // Update current directory and files in a single state update
+    setCurrentDirectory(newCurrentDirectory);
+    const current = tree.current.getRoot().get(path);
+    setFiles(createFileElement(current?.getChildren() ?? [], current));
   }, [path]);
 
-  return { files };
+  return [files, currentDirectory];
 };
