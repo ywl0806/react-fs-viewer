@@ -25,21 +25,33 @@ const Files = () => {
   const fileItems = React.useMemo(
     () => [
       {
-        path: 'hoge',
+        path: 'file1',
         data: {
-          title: 'hoge',
+          title: 'file1',
         },
       },
       {
-        path: 'hoge2',
+        path: 'file2',
         data: {
-          title: 'hoge',
+          title: 'file2',
         },
       },
       {
-        path: 'hoge3',
+        path: 'file3',
         data: {
-          title: 'hoge',
+          title: 'file3',
+        },
+      },
+      {
+        path: 'folder1/file4',
+        data: {
+          title: 'file4',
+        },
+      },
+      {
+        path: 'folder2/file4',
+        data: {
+          title: 'file4',
         },
       },
     ],
@@ -55,6 +67,7 @@ const Files = () => {
           },
           id: file.path,
           render(data) {
+            if (file.isFolder) return <Folder title={data.title} />;
             return <File title={data.title} />;
           },
           onDubbleClick(data) {
